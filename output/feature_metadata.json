@@ -1,0 +1,18 @@
+{
+  "total_rows": 2480,
+  "start_date": "2015-10-26",
+  "end_date": "2025-11-20",
+  "feature_count": 71,
+  "targets": [
+    "Target_Return_1d",
+    "Target_Direction",
+    "Target_Volatility"
+  ],
+  "external_features": [
+    "USDHKD",
+    "HSCEI",
+    "SP500",
+    "VIX",
+    "US10Y"
+  ]
+}

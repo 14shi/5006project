@@ -1,0 +1,5 @@
+Series,ADF_stat,ADF_pval,ADF_conclusion,KPSS_stat,KPSS_pval,KPSS_conclusion
+Closing Price,-2.058129669198403,0.261680565139269,Non-Stationary,0.9457504290562728,0.01,Non-Stationary
+Returns,-51.1168895578307,0.0,Stationary,0.0668517781324804,0.1,Stationary
+Log Returns,-51.15022257818081,0.0,Stationary,0.06621965601878634,0.1,Stationary
+First Difference,-51.32252854110274,0.0,Stationary,0.0651953436474945,0.1,Stationary
