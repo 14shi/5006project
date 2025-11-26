@@ -1,3 +1,114 @@
+# MSBD5006 Hang Seng Index Time Series Analysis Project
+
+## 1. Project Overview
+This project uses daily Hang Seng Index (HSI) data from January 2015 to November 2025 to complete the following tasks:
+1. Data acquisition and cleaning
+2. Exploratory data analysis (EDA) with stationarity and correlation tests
+3. ARIMA and GARCH modeling (including GJR-GARCH and EGARCH)
+4. Feature engineering based on technical indicators and external market factors
+5. Machine learning forecasting (Ridge, RandomForest, Logistic Regression, Gradient Boosting) and strategy backtesting
+6. Johansen cointegration test and VAR analysis (including Granger causality, impulse response functions, and variance decomposition)
+
+All scripts are located in the `scripts/` directory. Data and output figures/tables are stored in `data/` and `output/` respectively. The comprehensive analysis is presented in `notebooks/main_analysis.ipynb`.
+
+## 2. Directory Structure
+```
+5006-pro/
+├── data/
+│   ├── hsi_raw.csv                  # Raw HSI data
+│   ├── hsi_with_returns.csv         # Processed data with returns
+│   └── hsi_features.csv             # Technical indicators + external factor features
+│
+├── scripts/
+│   ├── 00_data_collection.py        # Data download and validation
+│   ├── 01_eda.py                    # Exploratory data analysis
+│   ├── 02_stationarity.py           # Stationarity tests
+│   ├── 03_correlation.py            # Autocorrelation and ARCH tests
+│   ├── 04_arima.py                  # ARIMA modeling
+│   ├── 05_garch.py                  # Baseline GARCH modeling
+│   ├── 06_forecasting.py            # Rolling forecasts and evaluation
+│   ├── 07_feature_engineering.py    # Technical indicators and external factors construction
+│   ├── 08_ml_models.py              # Machine learning prediction models
+│   ├── 09_backtest.py               # Trading strategy backtesting
+│   ├── 10_var_analysis.py           # Cointegration and VAR diagnostics
+│   ├── 11_garch_extensions.py       # GJR-GARCH / EGARCH comparison
+│   ├── 12_garch_x.py                # GARCH-X with exogenous variables
+│   └── 13_indicator_tests.py        # Significance tests for technical indicators
+│
+├── notebooks/
+│   └── main_analysis.ipynb          # Main analysis notebook (all figures + explanations)
+│
+├── output/
+│   ├── figures/01–31.png            # All 31 figures
+│   ├── forecast_comparison.csv      # ARIMA vs. baseline comparison
+│   ├── forecast_results.csv         # ARIMA forecast results
+│   ├── ml_*                         # ML model evaluation and feature importance
+│   ├── backtest_summary.csv         # Backtest performance metrics
+│   ├── var_*                        # VAR-related diagnostics
+│   ├── garch_extension_comparison.csv
+│   ├── garch_x_results.csv          # GARCH vs. GARCH-X comparison
+│   ├── garch_x_coefficients.csv     # Significance of exogenous coefficients
+│   └── indicator_predictability.csv # Technical indicator predictability tests
+│
+├── requirements.txt                 # Python dependencies
+└── PROJECT_SUMMARY.md               # Chinese project summary
+```
+
+## 3. How to Run
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Run scripts in order (skip 00 if data is already downloaded):
+   ```bash
+   python scripts/00_data_collection.py
+   python scripts/01_eda.py
+   python scripts/02_stationarity.py
+   python scripts/03_correlation.py
+   python scripts/04_arima.py
+   python scripts/05_garch.py
+   python scripts/06_forecasting.py
+   python scripts/07_feature_engineering.py
+   python scripts/08_ml_models.py
+   python scripts/09_backtest.py
+   python scripts/10_var_analysis.py
+   python scripts/11_garch_extensions.py
+   python scripts/12_garch_x.py
+   python scripts/13_indicator_tests.py
+   ```
+3. Open and run `notebooks/main_analysis.ipynb` to view all figures and detailed explanations.
+
+## 4. Methodology Overview
+1. **Exploratory Analysis**: Plotted price, returns, distribution, rolling statistics, and volume to identify key data characteristics.
+2. **Stationarity & Correlation**: ADF/KPSS tests confirm returns are stationary; ACF/PACF and Ljung-Box tests reveal significant ARCH effects.
+3. **ARIMA**: Best model selected via AIC/BIC is ARIMA(2,0,3), achieving ~52% directional accuracy over 252 test trading days.
+4. **GARCH & Extensions**: Baseline GARCH(1,1)-t captures volatility clustering; GJR-GARCH outperforms in AIC/BIC and better models asymmetric negative shock amplification.
+5. **GARCH-X**: Adding S&P500, VIX, USDHKD changes, SMA, and RSI as exogenous variables significantly reduces AIC (8181 → 7488), confirming external factors improve both return and volatility modeling.
+6. **Feature Engineering & ML**: Constructed 70+ technical indicators plus external factors (USDHKD, HSCEI, S&P500, VIX, US10Y, etc.). Random Forest and Logistic Regression slightly outperform ARIMA in directional prediction.
+7. **Strategy Backtesting**: Built long/short/flat strategies based on ML probabilities; the best Regression_RF_Targeted strategy achieved 49% annualized return and Sharpe ratio of 3.88 in the test period.
+8. **VAR/Cointegration**: Johansen test finds no significant cointegration in levels; differenced VAR shows significant Granger causality from S&P500 to HSI, with impulse responses lasting ~5–7 trading days.
+9. **Technical Indicator Tests**: OLS, Ljung-Box, and Granger causality tests on selected indicators show S&P500 and VIX changes are highly significant (p<0.01), while most pure price-based technical indicators lack predictive power.
+
+## 5. Key Results Summary
+- ARIMA baseline: R² = 0.018, directional accuracy 52.38% — consistent with weak-form market efficiency.
+- GJR-GARCH: Lowest AIC/BIC among GARCH extensions; effectively captures leverage effects.
+- GARCH-X: After including S&P500, VIX, USDHKD, and SMA/RSI, AIC drops to 7488; S&P500 and VIX coefficients significant at 1% level, confirming immediate impact of global factors.
+- VAR: Strong Granger causality from S&P500 → HSI; global risk sentiment has short-term influence on HSI.
+- Machine Learning: RandomForest (MAE 0.0089, R² 0.046, directional accuracy 57%); Logistic Regression (accuracy 58%, recall 79%).
+- Strategy: Under no-transaction-cost assumption, probability-threshold strategies significantly outperform Buy & Hold on risk-adjusted basis (real-world execution would require cost adjustments).
+- Indicator Tests: Pure technical indicators generally insignificant (t-stats near 0), while S&P500/VIX changes show |t| > 13, validating the importance of external factors.
+
+## 6. Data & Output Description
+- `data/`: Raw, cleaned, and feature-engineered datasets — fully reproducible.
+- `output/figures/`: 31 figures covering EDA, stationarity, ACF/PACF, ARIMA/GARCH diagnostics, forecasts, backtest equity curves, VAR IRF/FEVD, GARCH-X, and indicator tests.
+- `output/*.csv`: 24 result files containing detailed metrics, forecasts, model evaluations, backtest statistics, and significance tests.
+- `output/best_arima_model.pkl` & `output/best_garch_model.pkl`: Saved trained models.
+
+## 7. Report & Presentation
+- `notebooks/main_analysis.ipynb`: Complete notebook with all figures and explanations; can be exported to PDF as the final course report.
+- `PROJECT_SUMMARY.md`: Concise Chinese summary for quick review.
+- Recommended figures for presentation:  
+  01 (price), 11 (ACF/PACF), 17 (ARIMA diagnostics), 20 (GARCH volatility), 22 (ARIMA forecast), 24 (method comparison), 25 (strategy equity curve), 26–27 (VAR IRF/FEVD), 28–29 (GARCH extensions), 30 (GARCH-X volatility), 31 (indicator t-statistics).
 # MSBD5006 恒生指数时间序列分析项目
 
 ## 1. 项目概述
