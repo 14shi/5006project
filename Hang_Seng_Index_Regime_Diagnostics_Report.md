@@ -16,10 +16,13 @@ Annual returns during this period varied significantly, with positive gains in y
 ## 2. Data Preparation and Exploratory Data Analysis (EDA)
 ### Data Inputs
 Raw Open-High-Low-Close-Volume (OHLCV) data for the HSI was sourced from Yahoo Finance, spanning January 2015 to November 2025. Derived features included simple returns, log returns, rolling statistics (e.g., means, standard deviations), and volume diagnostics. Macroeconomic factors incorporated were USD/HKD exchange rates, HSCEI (Hang Seng China Enterprises Index), and S&P 500 indices to capture cross-market influences.
-![01_price_series](assets/01_price_series.png)
-![02_returns_series](assets/02_returns_series.png)
+![output/figures/01_price_series.png](output/figures/01_price_series.png)
+![output/figures/02_returns_series.png](output/figures/02_returns_series.png)
+
 ### Quality Checks
 Data processing involved missing value imputation using forward-fill methods, validation of rolling statistics, and computation of descriptive statistics, which were stored in output files for reproducibility. EDA revealed trends in trading volume over time, with spikes during high-volatility periods, and a near-zero correlation (-0.0006) between volume and returns, indicating no strong linear relationship.
+![output/figures/04_volume_analysis.png](output/figures/04_volume_analysis.png)
+![output/figures/03_distribution.png](output/figures/03_distribution.png)
 
 ## 3. Analysis
 ### 3.1 Stationarity and Correlation: Foundation for Modeling
@@ -28,6 +31,9 @@ Stationarity tests confirmed that HSI price levels are non-stationary, while ret
 - **ADF Test Results**: Prices non-stationary (p > 0.05); Returns/Log Returns stationary (p < 0.001).
 - **KPSS Test Results**: Prices non-stationary (p < 0.05); Returns stationary (p = 0.10).
 - **ARCH Effects**: Squared returns showed strong autocorrelation (Ljung-Box p-value < 0.01), confirming volatility clustering and the need for GARCH-family models.
+![output/figures/07_stationarity_price.png](output/figures/07_stationarity_price.png)
+![output/figures/14_acf_pacf_squared_returns.png](output/figures/14_acf_pacf_squared_returns.png)
+![output/figures/15_ljungbox_squared_returns.png](output/figures/15_ljungbox_squared_returns.png)
 
 Modeling implications: Non-stationary prices led to differencing in ARIMA/VAR frameworks, while ARCH effects motivated volatility-focused models.
 
@@ -38,6 +44,8 @@ Residual diagnostics confirmed model adequacy:
 - Standardized residuals: White noise (Ljung-Box p > 0.05).
 - Q-Q plot: Near-normal distribution.
 - No remaining ARCH effects in residuals.
+![output/figures/17_arima_diagnostics.png](output/figures/17_arima_diagnostics.png)
+![output/figures/18_arima_model_comparison.png](output/figures/18_arima_model_comparison.png)
 
 Model comparisons:
 - ARIMA(2,0,3) vs. ARIMA(1,0,1): ΔAIC = -15.2.
@@ -46,6 +54,8 @@ Model comparisons:
 Over a 252-day test period, ARIMA(2,0,3) outperformed a naive baseline:
 - ARIMA: MAE 0.011, RMSE 0.015, Positive R².
 - Naive: MAE 0.015, RMSE 0.021, Negative R².
+![output/figures/24_forecast_comparison.png](output/figures/24_forecast_comparison.png)
+![output/figures/22_arima_forecast.png](output/figures/22_arima_forecast.png)
 
 Key takeaways: ARIMA provides a consistent edge in near-random markets but requires extensions like GARCH and machine learning to handle time-varying volatility.
 
@@ -55,6 +65,8 @@ The GARCH(1,1)-t model captured dynamic volatility:
 - Persistence and mean reversion were observed, with slow decay post-shocks, confirming volatility clustering.
 
 This justifies GARCH frameworks for forecasting in volatile markets.
+![output/figures/20_conditional_volatility.png](output/figures/20_conditional_volatility.png)
+![output/figures/21_garch_residuals_diagnostics.png](output/figures/21_garch_residuals_diagnostics.png)
 
 ### 3.4 Regime-Specific Strategy and Segmented Models
 Structural breaks were identified using CUSUM and Bai-Perron tests at early 2020 (COVID-19) and early 2022 (Fed rate liftoff), dividing the data into regimes with varying volatility (Regime 1: σ=1.18%; Regime 2: σ=1.64%).
@@ -68,6 +80,7 @@ Machine learning trading strategies over a 150-day test period:
 - Benchmark Buy & Hold (Blue): ~1.30 final value.
 
 Core insight: Regime-aware filtering combined with probabilistic ML yields smoother equity curves and superior risk-adjusted returns.
+![output/figures/25_strategy_equity.png](output/figures/25_strategy_equity.png)
 
 ### 3.5 VAR and Cross-Market Signals: External Drivers
 VAR analysis revealed:
@@ -77,6 +90,8 @@ VAR analysis revealed:
 - Significant variance explanation: Forecast Error Variance Decomposition (FEVD) attributes ~35% to S&P 500.
 
 This justifies incorporating U.S. factors in GARCH-X and ML models.
+![output/figures/26_var_irf.png](output/figures/26_var_irf.png)
+![output/figures/27_var_fevd.png](output/figures/27_var_fevd.png)
 
 ### 3.6 Risks and Controls: Model Robustness
 Indicator significance tests showed external drivers (S&P 500 and VIX returns) with high t-statistics (>13, p < 1e-39), while classic price-based indicators (e.g., RSI, MACD) had near-zero predictive power.
@@ -84,6 +99,7 @@ Indicator significance tests showed external drivers (S&P 500 and VIX returns) w
 Risk implications: Emphasize macro factors and regime filters to avoid overfitting single-price signals.
 
 Controls: Documented indicator tests in `indicator_predictability.csv` and integrated only proven signals into ML/GARCH-X pipelines.
+![output/figures/31_indicator_tstats.png](output/figures/31_indicator_tstats.png)
 
 ## 4. Summary and Conclusions
 ### Market Efficiency
@@ -91,6 +107,7 @@ HSI returns demonstrate weak-form efficiency (directional accuracy 52.38%), with
 
 ### Volatility Modeling
 GJR-GARCH effectively captures leverage effects. GARCH-X improved fit (AIC reduced from 8181 to 7488) by including S&P 500, VIX, USD/HKD, SMA, and RSI, all significant at 1%.
+![output/figures/30_garchx_volatility.png](output/figures/30_garchx_volatility.png)
 
 ### Structural Breaks
 Validated breaks enable regime-specific forecasting.
