@@ -11,11 +11,13 @@ The Hang Seng Index is selected for analysis due to its market representativenes
 Additionally, the HSI's strong interconnections with U.S. and mainland Chinese markets enable the application of advanced multivariate methods, such as Vector Autoregression (VAR), Granger causality tests, and GARCH-X models. These linkages highlight spillover effects and justify the inclusion of external factors like the S&P 500, HSCEI, and USD/HKD exchange rates.
 
 Annual returns during this period varied significantly, with positive gains in years like 2017 (35.1%) and 2024 (28.6%), contrasted by losses in 2018 (-15.9%), 2020 (-4.5%), 2021 (-14.6%), 2022 (-15.0%), and 2023 (-14.6%). This volatility underscores the need for regime-specific diagnostics.
+![output/figures/06_yearly_returns.png](output/figures/06_yearly_returns.png)
 
 ## 2. Data Preparation and Exploratory Data Analysis (EDA)
 ### Data Inputs
 Raw Open-High-Low-Close-Volume (OHLCV) data for the HSI was sourced from Yahoo Finance, spanning January 2015 to November 2025. Derived features included simple returns, log returns, rolling statistics (e.g., means, standard deviations), and volume diagnostics. Macroeconomic factors incorporated were USD/HKD exchange rates, HSCEI (Hang Seng China Enterprises Index), and S&P 500 indices to capture cross-market influences.
-
+![01_price_series](assets/01_price_series.png)
+![02_returns_series](assets/02_returns_series.png)
 ### Quality Checks
 Data processing involved missing value imputation using forward-fill methods, validation of rolling statistics, and computation of descriptive statistics, which were stored in output files for reproducibility. EDA revealed trends in trading volume over time, with spikes during high-volatility periods, and a near-zero correlation (-0.0006) between volume and returns, indicating no strong linear relationship.
 
