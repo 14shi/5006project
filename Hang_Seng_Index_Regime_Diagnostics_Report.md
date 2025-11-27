@@ -102,7 +102,7 @@ The Regression_RF_Targeted strategy achieved 49% annualized return, Sharpe ratio
 Overall, this diagnostics highlights the value of regime-aware, multivariate approaches for HSI analysis and trading. Future work could incorporate real-time data and transaction costs for practical deployment.
 # Appendix: Supporting Materials
 ### A. Data Files
-* Raw and processed CSVs: hsi_raw.csv, hsi_with_returns.csv, hsi_features.csv (available at ~[https://github.com/14shi/5006project/tree/main/data](https://github.com/14shi/5006project/tree/main/data)~).
+* Processed CSVs(available at ~[https://github.com/14shi/5006project/tree/master/output](https://github.com/14shi/5006project/tree/master/output)~).
 
 ⠀B. Programs and Scripts
 * All code in Python: See scripts/ folder (e.g., 04_arima.py for ARIMA, 09_backtest.py for strategies).
